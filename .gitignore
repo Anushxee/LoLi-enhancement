@@ -1,0 +1,7 @@
+dataset/
+results/
+venv/
+__pycache__/
+*.pth
+*.jpg
+*.png
