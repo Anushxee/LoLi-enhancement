@@ -2,52 +2,55 @@ import streamlit as st
 import cv2
 import numpy as np
 from PIL import Image
+from streamlit_image_comparison import image_comparison
 
 st.set_page_config(page_title="Low Light Enhancement", layout="wide")
 
 st.title("Low Light Image Enhancement (CLAHE)")
+st.write("Upload a low-light image and enhance it using CLAHE.")
 
-st.write("Upload a low-light image to enhance it using CLAHE.")
+uploaded_file = st.file_uploader("Upload Image", type=["jpg","jpeg","png"])
 
-# Upload image
-uploaded_file = st.file_uploader("Upload Image", type=["jpg", "jpeg", "png"])
+clip_limit = st.slider("Enhancement Strength", 1.0, 5.0, 2.0)
 
-# Enhancement strength slider
-clip_limit = st.slider("Enhancement Strength (CLAHE Clip Limit)", 1.0, 5.0, 2.0)
 
 def enhance_clahe(image, clip_limit):
-    
-    img = cv2.cvtColor(image, cv2.COLOR_BGR2LAB)
-    l, a, b = cv2.split(img)
+
+    lab = cv2.cvtColor(image, cv2.COLOR_BGR2LAB)
+    l,a,b = cv2.split(lab)
 
     clahe = cv2.createCLAHE(clipLimit=clip_limit, tileGridSize=(8,8))
     cl = clahe.apply(l)
 
-    merged = cv2.merge((cl, a, b))
+    merged = cv2.merge((cl,a,b))
     enhanced = cv2.cvtColor(merged, cv2.COLOR_LAB2BGR)
 
     return enhanced
 
 
-if uploaded_file is not None:
+if uploaded_file:
 
     file_bytes = np.asarray(bytearray(uploaded_file.read()), dtype=np.uint8)
     img = cv2.imdecode(file_bytes, 1)
 
-    enhanced_img = enhance_clahe(img, clip_limit)
+    enhanced = enhance_clahe(img, clip_limit)
 
-    st.subheader("Results")
+    original_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    enhanced_rgb = cv2.cvtColor(enhanced, cv2.COLOR_BGR2RGB)
 
-    col1, col2 = st.columns(2)
+    st.subheader("Interactive Comparison")
 
-    with col1:
-        st.image(cv2.cvtColor(img, cv2.COLOR_BGR2RGB), caption="Original", use_container_width=True)
+    image_comparison(
+        img1=original_rgb,
+        img2=enhanced_rgb,
+        label1="Original",
+        label2="Enhanced",
+        width=700
+    )
 
-    with col2:
-        st.image(cv2.cvtColor(enhanced_img, cv2.COLOR_BGR2RGB), caption="Enhanced", use_container_width=True)
+    st.subheader("Download Result")
 
-    # Download button
-    _, buffer = cv2.imencode(".png", enhanced_img)
+    _, buffer = cv2.imencode(".png", enhanced)
 
     st.download_button(
         label="Download Enhanced Image",

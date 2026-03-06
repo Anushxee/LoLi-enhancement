@@ -1,5 +1,6 @@
 streamlit
 opencv-python-headless
 numpy
-scikit-image
 pillow
+scikit-image
+streamlit-image-comparison
