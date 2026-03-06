@@ -7,7 +7,7 @@ from streamlit_image_comparison import image_comparison
 st.set_page_config(page_title="Low Light Enhancement", layout="wide")
 
 st.title("Low Light Image Enhancement (CLAHE)")
-st.write("Upload a low-light image and enhance it using CLAHE.")
+st.write("Upload a low-light image and enhance it.")
 
 uploaded_file = st.file_uploader("Upload Image", type=["jpg","jpeg","png"])
 
