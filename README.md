@@ -8,4 +8,5 @@ Sample Result:
 
 Try the deployed app here:
 
-[https://your-streamlit-app-url.streamlit.app](https://loli-enhancement.streamlit.app/)
+https://loli-enhancement.streamlit.app/
+
